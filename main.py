@@ -1,4 +1,3 @@
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 import pandas as pd
+
 
 def map_details():
     name: str = []
@@ -50,9 +50,18 @@ items = []
 # Wait for links and extract
 results = wait.until(EC.visibility_of_all_elements_located((By.XPATH, "//div[contains(@class,'Nv2PK')]")))
 for result in results:
-    element = result.find_element("XPath","//div[contains(@class,'NrDZNb')]")
-    link = element.text
-    items.append(link)
-    print(items)
+    name = result.find_element("xpath", ".//div[contains(@class,'NrDZNb')]").text
+    #reviews = result.find_element("xpath", "//span[contains(@class,'MW4etd')]").text
+    results_span = result.find_elements(By.XPATH, ".//div[contains(@class,'AJB7ye')]")
+    results_phone = result.find_elements(By.XPATH, ". //div[contains(@class,'W4Efsd')][2]/div[2]/span[2]")
+    for child in results_span:
+        rating_element = child.find_element(By.XPATH, ".//span[contains(@class,'fontBodyMedium')]")
+        rating = rating_element.text.strip() if rating_element else "N/A"
+    for child_p in results_phone:
+        phone =  child_p.find_element(By.XPATH, ".//span[contains(@class,'UsdlK')]").text
+    industry = result.find_element("xpath", ".//div[contains(@class,'W4Efsd')]/span/span").text
+    address = result.find_element("xpath", ".//div[contains(@class,'W4Efsd')]/span[2]/span[2]").text
+    items.append({"name": name, "rating": rating, "phone": phone, "industry": industry, "address": address, })
+for result in items:
+    print(result)
 
-driver.close()
